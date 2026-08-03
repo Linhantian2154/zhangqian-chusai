@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <link rel="manifest" href="manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>历史人物角色扮演 · 张骞出塞 · 完整版（三幕）</title>
 <style>
 :root{
@@ -347,10 +348,12 @@ const STORY = [
   },
   {
     id:"s10",
-    who:"📜 说书人",
+    who:"🎉 第一幕完成！",
     narrator:"有一天，匈奴内部起了纷争，看守松了。你抓住机会，带上妻子和随从，趁夜逃出营地，继续向西——向着大月氏的方向！",
     scene:"🌙", place:"逃离匈奴营地",
-    choices:[{ico:"🐫", text:"第二幕：翻过葱岭，走向大月氏！", next:"s11"}]
+    choices:[{ico:"🐫", text:"第二幕：翻过葱岭，走向大月氏！", next:"s11", good:true,
+     kTitle:"🎉 第一幕完成！你学会了：河西走廊=雪水浇出的绿洲链",
+     kBody:"你掌握了第一幕的核心知识——河西走廊！还记得吗？祁连山的雪水流到山脚，浇出一串绿洲城市，所以张骞贴着山走，一路有水有补给。下一幕更难了：翻过亚洲屋脊帕米尔！"}]
   },
   /* ========== 第二幕：翻过葱岭 ========== */
   {
@@ -443,10 +446,12 @@ const STORY = [
   /* ========== 第三幕：凿空西域 ========== */
   {
     id:"s17",
-    who:"📜 说书人",
+    who:"🎉 第二幕完成！",
     narrator:"考察完西域，你开始返程。可归路并不太平——你为了避开匈奴，改走南边的路，结果还是被匈奴抓住，又被扣留了一年多。",
     scene:"⛺", place:"归途 · 又被扣押",
-    choices:[{ico:"😤", text:"又被抓了……但我不放弃！", next:"s18"}]
+    choices:[{ico:"😤", text:"第三幕：凿空西域，带着见闻回家！", next:"s18", good:true,
+     kTitle:"🎉 第二幕完成！你学会了：帕米尔=亚洲的屋脊",
+     kBody:"你通关了第二幕！你知道了：葱岭（帕米尔）太高了，山顶终年积雪、空气稀薄，翻山要看天——雪天不能翻，等天晴了快走快过。最后一幕，把13年的见闻带回长安！"}]
   },
   {
     id:"s18",
@@ -605,6 +610,12 @@ function renderEnd(){
     renderEnd();
   });
   $("restartBtn").addEventListener("click",()=>{ location.reload(); });
+  /* ===== 通关记录（localStorage）===== */
+  try{
+    const done = JSON.parse(localStorage.getItem("shiguang_story_progress") || "{}");
+    done["zhangqian"] = { done:true, at:Date.now(), rank:rank };
+    localStorage.setItem("shiguang_story_progress", JSON.stringify(done));
+  }catch(e){}
   $("teaseBtn").addEventListener("click",()=>{ sfx.secret(); alert("🎉 张骞的故事讲完了！快去剧场玩《郑和下西洋》：他靠着季风，开着比足球场还大的宝船驶向大海！"); });
 }
 
@@ -614,25 +625,22 @@ updateBag();
 </script>
 <script>
 if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("sw.js").catch(()=>{});
-  });
+  window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
 }
-/* 添加到主屏幕（浮动按钮） */
 (function(){
-  if(window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true) return;
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const fab = document.createElement("div");
+  if((typeof window.matchMedia==="function" && window.matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true) return;
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  var fab = document.createElement("button");
   fab.id = "installFab";
-  fab.style.cssText = "position:fixed; bottom:18px; right:18px; z-index:999; background:linear-gradient(135deg,#2a9d8f,#1c6b62); color:#fff; border:none; border-radius:999px; padding:12px 18px; font-size:.9rem; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.25);";
-  fab.textContent = "📲 添加到主屏幕";
+  fab.textContent = isIOS ? "📲 添加到主屏幕" : "📲 安装App";
+  fab.style.cssText = "position:fixed;right:14px;bottom:18px;z-index:999;background:linear-gradient(180deg,#2a9d8f,#1c6b62);color:#fff;border:none;border-radius:999px;padding:12px 18px;font-size:.95rem;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer;";
   document.body.appendChild(fab);
-  let dp = null;
-  window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); dp = e; });
-  fab.addEventListener("click", async ()=>{
-    if(dp){ dp.prompt(); await dp.userChoice; dp = null; fab.style.display = "none"; }
-    else if(isIOS){ alert("点浏览器底部的分享按钮（方框+向上箭头）→ 添加到主屏幕"); }
-    else { alert("请在手机浏览器打开此页面，点「添加到主屏幕」安装到桌面。电脑浏览器：地址栏右侧安装图标（或菜单→安装应用）。"); }
+  var dPrompt = null;
+  window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); dPrompt = e; });
+  fab.addEventListener("click", function(){
+    if(dPrompt){ dPrompt.prompt(); dPrompt.userChoice.then(function(r){ if(r.outcome==="accepted") fab.remove(); }); }
+    else if(isIOS){ alert("iPhone/iPad：点浏览器底部的「分享」按钮（方框+箭头），再选「添加到主屏幕」即可。"); }
+    else { alert("在手机浏览器打开此页面，点「安装App」就能装到桌面。电脑上请用手机访问。"); }
   });
 })();
 </script>
