@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>历史人物角色扮演 · 张骞出塞 · v1.0 第一幕「长安的召见」</title>
+<title>历史人物角色扮演 · 张骞出塞 · 完整版（三幕）</title>
 <style>
 :root{
   --bg:#fdf6e3; --card:#fff; --ink:#3d3a2e; --gold:#d4a017; --gold2:#b8860b;
@@ -152,7 +152,7 @@ dialog::backdrop{background:rgba(30,40,60,.55);}
   <header class="topbar">
     <div class="brand">
       <span class="logo">🐫</span>
-      <h1>张骞出塞<span class="sub">历史人物角色扮演 · 第一幕</span></h1>
+      <h1>张骞出塞<span class="sub">历史人物角色扮演 · 完整三幕</span></h1>
     </div>
     <button class="bag-btn" id="bagBtn">🎒 行囊 <span id="bagCount">0</span>/6</button>
   </header>
@@ -202,7 +202,9 @@ const ITEMS = {
   shui:     {ico:"💧", nm:"水囊",      desc:"沙漠里水比黄金贵"},
   sichou:   {ico:"🧵", nm:"丝绸",      desc:"给远方国王的礼物"},
   lu:       {ico:"🗺️", nm:"路线图",    desc:"贴着祁连山走的绿洲路线"},
-  zhong:    {ico:"🌱", nm:"种子",      desc:"从西域带回的葡萄种子（第二幕）"}
+  guiyou:   {ico:"🐫", nm:"西域见闻",   desc:"走过大宛、康居、大月氏，看见另一个世界"},
+  zhongzi:  {ico:"🌱", nm:"种子",      desc:"从西域带回的葡萄、苜蓿种子"},
+  dili:     {ico:"📖", nm:"西域地图",   desc:"亲手画出的第一张西域地图"}
 };
 let owned = new Set();
 
@@ -347,7 +349,126 @@ const STORY = [
     who:"📜 说书人",
     narrator:"有一天，匈奴内部起了纷争，看守松了。你抓住机会，带上妻子和随从，趁夜逃出营地，继续向西——向着大月氏的方向！",
     scene:"🌙", place:"逃离匈奴营地",
-    choices:[{ico:"🌱", text:"第一幕·完 —— 查看出使记录", next:"end"}]
+    choices:[{ico:"🐫", text:"第二幕：翻过葱岭，走向大月氏！", next:"s11"}]
+  },
+  /* ========== 第二幕：翻过葱岭 ========== */
+  {
+    id:"s11",
+    who:"📜 说书人",
+    narrator:"逃出匈奴营地，你一路向西。可没走多远，一座巨大的山脉横在眼前——这座山，当地人叫它葱岭（就是今天的帕米尔高原）。山的另一边，就是大宛国。",
+    scene:"🏔️", place:"葱岭脚下",
+    choices:[{ico:"🏔️", text:"抬头看这座山", next:"s12"}]
+  },
+  {
+    id:"s12",
+    who:"🧗 当地向导",
+    narrator:"“张大人，翻过葱岭可不容易！这山太高了，山顶终年积雪，空气稀薄，人走快了就喘不上气。好多商队都绕不过它——要过西域，就必须翻过它。”",
+    scene:"❄️", place:"葱岭 · 山口",
+    map:{
+      title:"为什么翻葱岭这么难？",
+      stops:[
+        {ico:"🌱", nm:"山脚", note:"绿洲·有人住"},
+        {ico:"🏔️", nm:"葱岭", note:"又高又冷·空气稀薄"},
+        {ico:"🌍", nm:"大宛", note:"山的另一边"}
+      ]
+    },
+    choices:[
+      {ico:"🏔️", text:"“越高越冷，空气越少——难怪这么难翻！”", next:"s13", good:true,
+       kTitle:"💡 帕米尔：亚洲的屋脊",
+       kBody:"帕米尔高原平均海拔4000多米，是亚洲的‘屋脊’。山越高越冷，空气越稀薄——所以翻葱岭要赶在天气好时，快走快过，不能停留。张骞的队伍是第一批翻过这里的汉朝人。"},
+      {ico:"🧭", text:"“要不绕道走？”", next:"s12",
+       kTitle:"💡 绕不过去",
+       kBody:"葱岭连着天山和昆仑山，像一堵墙横在亚洲中间。去西域只有两条路：翻过去，或者绕很远很远的路。张骞选择翻过去。", good:false},
+      {ico:"😰", text:"“这么难，要不……回去？”", next:"s12",
+       kTitle:"💡 不能回头",
+       kBody:"你已经走了几年，被扣押了十年，就为了找到大月氏。现在大月氏就在山那边——翻过去，就能完成使命。", good:false}
+    ]
+  },
+  {
+    id:"s13",
+    who:"🐫 随从",
+    narrator:"你带着队伍，咬紧牙关翻过葱岭。过了山，眼前是另一片天地——大宛国！这里的马又高又壮，跑起来像飞一样，人们叫它‘汗血宝马’。大宛国王听说是汉朝使者，热情地接待了你。",
+    scene:"🐎", place:"大宛 · 汗血宝马的故乡",
+    choices:[
+      {ico:"🐎", text:"“好马！如果能带回中原就好了……”", next:"s14"},
+      {ico:"🤝", text:"“多谢款待，我要去大月氏，请指路！”", next:"s14", good:true}
+    ]
+  },
+  {
+    id:"s14",
+    who:"📜 说书人",
+    narrator:"从大宛出发，又经过康居国，终于——你来到了大月氏。可是，迎接你的，并不是想象中满怀仇恨的盟友。大月氏国王安居乐业，土地肥沃，牛羊成群，他们说：“我们已经忘了仇恨，不想再打仗了。”",
+    scene:"🏞️", place:"大月氏 · 美丽的牧场",
+    choices:[
+      {ico:"😲", text:"“什么？你们不想报仇了吗？”", next:"s15"},
+      {ico:"🤔", text:"“那可怎么办？我的使命……”", next:"s15"}
+    ]
+  },
+  {
+    id:"s15",
+    who:"📜 说书人",
+    narrator:"大月氏不想打仗，你的出使使命——失败了。你千里迢迢，被扣十年，翻过葱岭，就是为了联合他们对抗匈奴。可现在，他们只想安稳过日子。",
+    scene:"🌾", place:"大月氏 · 牧场边",
+    choices:[
+      {ico:"😞", text:"“那就……收拾收拾回家吧。”", next:"s16"},
+      {ico:"🔍", text:"“等等！来都来了——我要把西域看清楚，再回去！”", next:"s16", good:true,
+       kTitle:"💡 使命失败了，但眼界打开了",
+       kBody:"张骞没能说服大月氏，但他没有空手而归。他在大月氏、大夏等国住了很久，仔细记录这里的地理、物产、风俗——这些见闻，后来让整个汉朝知道了西域长什么样。"}
+    ]
+  },
+  {
+    id:"s16",
+    who:"🗺️ 张骞（你）",
+    narrator:"你在大月氏、大夏游历考察，把走过的路、看过的国家、见过的物产，都记了下来。你还发现——印度那边，竟然有四川的蜀布和邛竹杖！这说明，早就有人从中国走到了印度。",
+    scene:"📖", place:"西域 · 考察路上",
+    choices:[
+      {ico:"🐫", text:"“这些见闻，就是最好的收获！”", next:"s17", good:true,
+       kTitle:"💡 他带回了一个‘新世界’",
+       kBody:"张骞带回去的不是金银，而是西域的见闻：哪里有国家、走哪条路、种什么庄稼、出什么宝物。这些东西，比金子更值钱——因为它让汉朝第一次真正了解了外面的世界。",
+       item:"guiyou"}
+    ]
+  },
+  /* ========== 第三幕：凿空西域 ========== */
+  {
+    id:"s17",
+    who:"📜 说书人",
+    narrator:"考察完西域，你开始返程。可归路并不太平——你为了避开匈奴，改走南边的路，结果还是被匈奴抓住，又被扣留了一年多。",
+    scene:"⛺", place:"归途 · 又被扣押",
+    choices:[{ico:"😤", text:"又被抓了……但我不放弃！", next:"s18"}]
+  },
+  {
+    id:"s18",
+    who:"📜 说书人",
+    narrator:"趁着匈奴内乱，你再次逃了出来。这一次，你带着西域的见闻、地图，还有葡萄、苜蓿的种子，风尘仆仆地回到了长安。从出发那天算起——整整13年。",
+    scene:"🏯", place:"长安 · 城门",
+    choices:[
+      {ico:"🌱", text:"“我回来了！带着西域的秘密！”", next:"s19", good:true,
+       kTitle:"💡 13年，他终于回来了",
+       kBody:"公元前126年，张骞回到长安。出发时他带着100多人，回来时只剩下他和向导堂邑父两个人。但他带回来的见闻，让汉武帝大喜过望——封他为‘博望侯’。",
+       item:"zhongzi"}
+    ]
+  },
+  {
+    id:"s19",
+    who:"👑 汉武帝",
+    narrator:"“张骞！你回来了！快，说说西域到底是什么样？” 你拿出亲手画的地图，把大宛的汗血宝马、大月氏的牧场、大夏的集市，一样一样讲给皇帝听。",
+    scene:"🗺️", place:"未央宫 · 大殿",
+    choices:[
+      {ico:"🗺️", text:"把地图献给皇帝", next:"s20", good:true,
+       kTitle:"💡 凿空西域",
+       kBody:"司马迁在《史记》里说，张骞‘凿空’西域——‘凿空’就是开凿出一条路。他第一次让中原人知道，西域不是传说，是真实存在的大千世界。从这以后，丝路正式开通！",
+       item:"dili"},
+      {ico:"🐫", text:"把见闻讲给皇帝听", next:"s20",
+       kTitle:"💡 见闻就是财富",
+       kBody:"张骞讲的每一个国家、每一条路线，都成了汉朝向西发展的‘攻略’。后来汉朝派兵打通河西走廊，设立武威、张掖、酒泉、敦煌四郡，靠的就是张骞探明的路线。"}
+    ]
+  },
+  {
+    id:"s20",
+    who:"📜 说书人",
+    narrator:"张骞的故事结束了，可丝绸之路的故事才刚刚开始。他带回来的种子，在中原长出了葡萄、苜蓿；他画的地图，指引着一队队商旅走向西域；他的勇气和坚持，成了一个民族探索世界的起点。",
+    scene:"🌏", place:"长安 · 丝路起点",
+    choices:[{ico:"🌟", text:"张骞出塞·全剧终 —— 查看出使记录", next:"end"}]
   }
 ];
 
@@ -442,27 +563,28 @@ function renderEnd(){
   prog.innerHTML = STORY.map(()=>`<span class="dot done"></span>`).join("");
 
   const got = [...owned].map(k=>ITEMS[k]);
-  const rank = owned.size>=5 ? "🏆 传奇使者" : owned.size>=3 ? "⭐ 勇敢的使者" : "🌱 新晋使者";
-  const rankLine = owned.size>=5 ? "你把每一件该准备的东西都带上了——冷静、勇敢、有远见！" :
-                   owned.size>=3 ? "你做出了关键的选择，开始像一个真正的使者了！" :
-                   "这是你的第一次出使，胆量可嘉，下次准备得更充分就更好了！";
+  const rank = owned.size>=7 ? "🏆 凿空西域的传奇使者" : owned.size>=5 ? "⭐ 勇敢的探索者" : owned.size>=3 ? "🌱 新晋使者" : "🕯️ 初出茅庐的小使者";
+  const rankLine = owned.size>=7 ? "你完整走完了张骞的13年——翻山越岭、九死一生，带回了整个世界！" :
+                   owned.size>=5 ? "你做出了关键的选择，像一个真正的使者了！" :
+                   owned.size>=3 ? "你踏上了出使之路，胆量可嘉，下次把见闻带全！" :
+                   "你刚上路就回来了——再来一次，把张骞的旅程走完！";
 
   const nameHtml = !name ? `<input class="sig-input" id="nameInput" placeholder="写下你的名字，小使者 ✍️" maxlength="12"><button class="next-btn" id="nameBtn" style="margin-top:8px;">署名 📜</button>` :
     `<b>${name}</b>`;
 
   stage.innerHTML = `
     <div class="record">
-      <h3>📜 我的出使记录</h3>
+      <h3>📜 我的出使记录（13年）</h3>
       <div class="r-row">🧭 <b>我扮演的角色：</b>张骞，大汉使者</div>
       <div class="r-row">🎯 <b>我的使命：</b>出使西域，联络大月氏，共同对付匈奴</div>
-      <div class="r-row">🐫 <b>我选的路：</b>贴着祁连山走河西走廊，因为山脚下有雪水浇出的绿洲城市</div>
-      <div class="r-row">🎒 <b>我带回的行囊（${owned.size}/6）：</b>${got.map(v=>v.ico+v.nm).join("、")||"空空的"}</div>
-      <div class="r-row">🤔 <b>我还没弄明白：</b>张骞被扣了十年，他还能找到大月氏吗？</div>
-      <div class="r-row">🗣️ <b>说给爸妈听：</b>张骞是第一个走进西域的汉朝人。他出使前，谁都不知道西域有多远；他被匈奴扣了十年也不放弃——因为他答应过皇帝，一定要完成任务。</div>
+      <div class="r-row">🐫 <b>我的旅程：</b>长安 → 河西走廊（贴着祁连山走）→ 被匈奴扣留十年 → 翻过葱岭 → 大宛 → 大月氏 → 回到长安</div>
+      <div class="r-row">🎒 <b>我带回来的（${owned.size}/8）：</b>${got.map(v=>v.ico+v.nm).join("、")||"空空的"}</div>
+      <div class="r-row">🤔 <b>我明白的：</b>①河西走廊=祁连山雪水浇出的绿洲链，所以商队只能贴山走；②葱岭太高，所以翻越要快走快过；③大月氏不想打仗，但张骞把西域看清了——这就叫凿空西域</div>
+      <div class="r-row">🗣️ <b>说给爸妈听：</b>张骞是第一个走进西域的汉朝人。他被匈奴扣了十年也不放弃，翻过世界屋脊帕米尔高原找到大月氏，虽然没谈成联盟，却带回了西域的地图和见闻——从此丝绸之路正式开通。他一个人的坚持，改变了一个国家的眼界。</div>
       <div style="margin-top:12px; padding:12px; border-radius:14px; background:#fff3d8; border:2px solid var(--gold);"><b>${rank}</b><br>${rankLine}</div>
       <div class="seal">—— 小使者 ${nameHtml} 的出使记录 ✍️</div>
       <button class="next-btn" id="restartBtn" style="margin-top:16px; background:linear-gradient(180deg,#5aa9a0,#2a9d8f); box-shadow:0 4px 0 #1c6b62;">🔄 重新出使（再玩一次）</button>
-      <button class="next-btn" id="teaseBtn" style="margin-top:10px; background:linear-gradient(180deg,#8e6bb8,#6d4d96); box-shadow:0 4px 0 #4a3568;">🔜 第二幕预告：被扣的十年 →（敬请期待）</button>
+      <button class="next-btn" id="teaseBtn" style="margin-top:10px; background:linear-gradient(180deg,#8e6bb8,#6d4d96); box-shadow:0 4px 0 #4a3568;">🔜 下一个故事：郑和下西洋 ⛵（剧场里可玩）</button>
     </div>`;
   sfx.good();
 
@@ -471,7 +593,7 @@ function renderEnd(){
     renderEnd();
   });
   $("restartBtn").addEventListener("click",()=>{ location.reload(); });
-  $("teaseBtn").addEventListener("click",()=>{ sfx.secret(); alert("第二幕《被扣的十年》：张骞在匈奴营地藏起符节、等待机会、最后逃出继续西行——正在制作中！"); });
+  $("teaseBtn").addEventListener("click",()=>{ sfx.secret(); alert("🎉 张骞的故事讲完了！快去剧场玩《郑和下西洋》：他靠着季风，开着比足球场还大的宝船驶向大海！"); });
 }
 
 /* ================= 启动 ================= */
