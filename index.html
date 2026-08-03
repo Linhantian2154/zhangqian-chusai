@@ -363,7 +363,7 @@ const STORY = [
   {
     id:"s12",
     who:"🧗 当地向导",
-    narrator:"“张大人，翻过葱岭可不容易！这山太高了，山顶终年积雪，空气稀薄，人走快了就喘不上气。好多商队都绕不过它——要过西域，就必须翻过它。”",
+    narrator:"“张大人，翻过葱岭可不容易！这山太高了，山顶终年积雪，空气稀薄，人走快了就喘不上气。要过西域，就必须翻过它——可眼下，天边那团乌云要来了。”向导指指山顶：“雪天翻山，看不见路，还冻得死人。咱们怎么办？”",
     scene:"❄️", place:"葱岭 · 山口",
     map:{
       title:"为什么翻葱岭这么难？",
@@ -374,15 +374,26 @@ const STORY = [
       ]
     },
     choices:[
-      {ico:"🏔️", text:"“越高越冷，空气越少——难怪这么难翻！”", next:"s13", good:true,
-       kTitle:"💡 帕米尔：亚洲的屋脊",
-       kBody:"帕米尔高原平均海拔4000多米，是亚洲的‘屋脊’。山越高越冷，空气越稀薄——所以翻葱岭要赶在天气好时，快走快过，不能停留。张骞的队伍是第一批翻过这里的汉朝人。"},
-      {ico:"🧭", text:"“要不绕道走？”", next:"s12",
+      {ico:"⏳", text:"“等乌云过去、天晴了再翻！雪天翻山太危险。”", next:"s12b", good:true,
+       kTitle:"💡 翻山要看天",
+       kBody:"葱岭太高太冷，下雪时看不见路、又冷又缺氧，强行翻山等于送命。聪明的做法是等雪停、天晴，趁着好天气快走快过。张骞的队伍就是这样，看天行事，才翻过了这座山。"},
+      {ico:"🏃", text:"“管它呢，趁现在赶紧冲过去！”", next:"s12",
+       kTitle:"💡 雪天翻山=送死",
+       kBody:"雪一下，山路被盖住，分不清哪儿是路哪儿是悬崖；山高空气稀薄，一慌一跑更容易缺氧晕倒。向导见过太多硬闯的人，再也没下来。", good:false},
+      {ico:"🧭", text:"“那……绕道走吧？”", next:"s12",
        kTitle:"💡 绕不过去",
-       kBody:"葱岭连着天山和昆仑山，像一堵墙横在亚洲中间。去西域只有两条路：翻过去，或者绕很远很远的路。张骞选择翻过去。", good:false},
-      {ico:"😰", text:"“这么难，要不……回去？”", next:"s12",
-       kTitle:"💡 不能回头",
-       kBody:"你已经走了几年，被扣押了十年，就为了找到大月氏。现在大月氏就在山那边——翻过去，就能完成使命。", good:false}
+       kBody:"葱岭连着天山和昆仑山，像一堵墙横在亚洲中间。去西域只有两条路：翻过去，或者绕很远很远的路——远到会饿死在沙漠里。", good:false}
+    ]
+  },
+  {
+    id:"s12b",
+    who:"🧗 当地向导",
+    narrator:"“对！等天晴。”你在山口扎营，等了三天。雪停了，太阳出来，山顶亮得刺眼。向导一挥手：“就是现在！快走快过，千万别停！”队伍踩进没过小腿的雪里，一步一步往上爬。",
+    scene:"☀️", place:"葱岭 · 雪后初晴",
+    choices:[
+      {ico:"🏔️", text:"“跟上！一口气翻过去！”", next:"s13", good:true,
+       kTitle:"💡 快走快过，不能停留",
+       kBody:"葱岭海拔4000多米，山顶空气稀薄，停下来久了人会头晕缺氧。所以翻山要趁天气好、快走快过——这也是为什么必须等雪停才动身。"}
     ]
   },
   {
@@ -613,15 +624,15 @@ if("serviceWorker" in navigator){
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
   const fab = document.createElement("div");
   fab.id = "installFab";
-  fab.style.cssText = "display:none; position:fixed; bottom:18px; right:18px; z-index:999; background:linear-gradient(135deg,#2a9d8f,#1c6b62); color:#fff; border:none; border-radius:999px; padding:12px 18px; font-size:.9rem; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.25);";
+  fab.style.cssText = "position:fixed; bottom:18px; right:18px; z-index:999; background:linear-gradient(135deg,#2a9d8f,#1c6b62); color:#fff; border:none; border-radius:999px; padding:12px 18px; font-size:.9rem; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.25);";
   fab.textContent = "📲 添加到主屏幕";
   document.body.appendChild(fab);
   let dp = null;
-  window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); dp = e; fab.style.display = "block"; });
+  window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); dp = e; });
   fab.addEventListener("click", async ()=>{
     if(dp){ dp.prompt(); await dp.userChoice; dp = null; fab.style.display = "none"; }
     else if(isIOS){ alert("点浏览器底部的分享按钮（方框+向上箭头）→ 添加到主屏幕"); }
-    else { alert("请在手机浏览器中打开此页面，再点添加到主屏幕"); }
+    else { alert("请在手机浏览器打开此页面，点「添加到主屏幕」安装到桌面。电脑浏览器：地址栏右侧安装图标（或菜单→安装应用）。"); }
   });
 })();
 </script>
