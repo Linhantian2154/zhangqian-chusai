@@ -607,6 +607,23 @@ if("serviceWorker" in navigator){
     navigator.serviceWorker.register("sw.js").catch(()=>{});
   });
 }
+/* 添加到主屏幕（浮动按钮） */
+(function(){
+  if(window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true) return;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const fab = document.createElement("div");
+  fab.id = "installFab";
+  fab.style.cssText = "display:none; position:fixed; bottom:18px; right:18px; z-index:999; background:linear-gradient(135deg,#2a9d8f,#1c6b62); color:#fff; border:none; border-radius:999px; padding:12px 18px; font-size:.9rem; font-weight:800; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,.25);";
+  fab.textContent = "📲 添加到主屏幕";
+  document.body.appendChild(fab);
+  let dp = null;
+  window.addEventListener("beforeinstallprompt", (e)=>{ e.preventDefault(); dp = e; fab.style.display = "block"; });
+  fab.addEventListener("click", async ()=>{
+    if(dp){ dp.prompt(); await dp.userChoice; dp = null; fab.style.display = "none"; }
+    else if(isIOS){ alert("点浏览器底部的分享按钮（方框+向上箭头）→ 添加到主屏幕"); }
+    else { alert("请在手机浏览器中打开此页面，再点添加到主屏幕"); }
+  });
+})();
 </script>
 </body>
 </html>
