@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>历史人物角色扮演 · 张骞出塞 · v1.0 第一幕「长安的召见」</title>
+<style>
+:root{
+  --bg:#fdf6e3; --card:#fff; --ink:#3d3a2e; --gold:#d4a017; --gold2:#b8860b;
+  --sky:#8ecae6; --desert:#e9c46a; --green:#2a9d8f; --danger:#e07a5f; --night:#264653;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  font-family:"Microsoft YaHei","PingFang SC",sans-serif;
+  background:linear-gradient(180deg,#fdf6e3 0%,#f5e9c8 100%);
+  color:var(--ink); min-height:100vh;
+}
+.app{max-width:720px; margin:0 auto; padding:14px;}
+
+/* 顶栏：行囊 */
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--card); border-radius:16px; padding:10px 14px;
+  border:2px solid var(--gold); margin-bottom:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.brand{display:flex; align-items:center; gap:8px;}
+.brand .logo{font-size:1.5rem;}
+.brand h1{font-size:1.05rem; line-height:1.2;}
+.brand .sub{display:block; font-size:.68rem; color:#8a8578; font-weight:400;}
+.bag-btn{
+  background:#fff3d8; border:2px solid var(--gold); border-radius:999px;
+  padding:6px 14px; font-size:.85rem; cursor:pointer; color:var(--gold2); font-weight:700;
+}
+.bag-btn:hover{background:#ffe9b8;}
+
+/* 说书人 */
+.narrator{display:flex; gap:10px; align-items:flex-start; margin-bottom:14px;}
+.narrator .avatar{font-size:2.6rem; line-height:1;}
+.narrator .bubble{
+  flex:1; background:var(--card); border-radius:16px; padding:14px 16px;
+  border:2px solid #e8dcc0; font-size:1.02rem; line-height:1.75; box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+.narrator .who{display:block; font-size:.72rem; color:#a89c80; margin-bottom:4px; font-weight:700;}
+
+/* 场景大图 */
+.scene{
+  background:var(--card); border-radius:16px; border:2px solid #e8dcc0;
+  padding:14px; margin-bottom:14px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+.scene .big{font-size:3.6rem; margin-bottom:6px;}
+.scene .place{font-size:.8rem; color:#a89c80;}
+
+/* 地图（路线决策用） */
+.mapbox{
+  background:linear-gradient(180deg,#bfe3f2 0%,#f4e3bb 70%,#e9c46a 100%);
+  border-radius:14px; padding:10px; margin-top:10px; position:relative; min-height:150px;
+  border:2px solid #d8cba8;
+}
+.mapbox .m-title{font-size:.78rem; font-weight:700; color:#5b7a8c; margin-bottom:6px; text-align:left;}
+.maprow{display:flex; align-items:center; justify-content:space-between; gap:4px; flex-wrap:nowrap;}
+.mstop{display:flex; flex-direction:column; align-items:center; gap:2px; min-width:52px;}
+.mstop .pin{font-size:1.6rem;}
+.mstop .nm{font-size:.62rem; font-weight:700; color:#3d3a2e; background:#fff9; border-radius:999px; padding:1px 6px;}
+.mstop .note{font-size:.6rem; color:#7a6f55;}
+.mpath{flex:1; height:3px; background:#b8860b88; position:relative; min-width:14px;}
+.mpath::after{content:"🐫"; position:absolute; top:-9px; left:40%; font-size:1rem;}
+.mpath.off{background:#ccc8bb;}
+.mstop.mount .pin{font-size:2rem;}
+.mstop.mount .nm{background:#d8eef9;}
+.mstop.well .pin{font-size:1.4rem;}
+
+/* 选项 */
+.choices{display:flex; flex-direction:column; gap:10px; margin-top:4px;}
+.choice{
+  background:var(--card); border:2.5px solid #e0d5b5; border-radius:14px;
+  padding:13px 16px; font-size:.98rem; line-height:1.55; cursor:pointer; text-align:left;
+  color:var(--ink); transition:all .15s; display:flex; align-items:flex-start; gap:10px;
+}
+.choice:hover{border-color:var(--gold); background:#fffdf5; transform:translateY(-1px); box-shadow:0 4px 10px rgba(0,0,0,.07);}
+.choice .c-ico{font-size:1.5rem; flex-shrink:0;}
+.choice.disabled{opacity:.5; pointer-events:none;}
+
+/* 后果反馈 */
+.feedback{
+  background:#fff; border-radius:16px; border:2px solid var(--gold);
+  padding:16px; margin-top:14px; font-size:1rem; line-height:1.75;
+  animation:popIn .35s ease; box-shadow:0 4px 14px rgba(0,0,0,.08);
+}
+.feedback.knowledge{border-color:#2a9d8f; background:#f2fbf8;}
+.feedback.bad{border-color:#e07a5f; background:#fdf3f0;}
+.feedback h4{font-size:.85rem; margin-bottom:6px; color:#8a8578;}
+.feedback .k-title{font-size:1.05rem; font-weight:800; color:var(--green); margin-bottom:4px;}
+
+/* 继续按钮 */
+.next-btn{
+  margin-top:14px; width:100%; padding:14px; font-size:1.05rem; font-weight:800;
+  background:linear-gradient(180deg,var(--gold),var(--gold2)); color:#fff;
+  border:none; border-radius:14px; cursor:pointer; box-shadow:0 4px 0 #8a6d12;
+  transition:all .12s;
+}
+.next-btn:hover{filter:brightness(1.06);}
+.next-btn:active{transform:translateY(3px); box-shadow:0 1px 0 #8a6d12;}
+.next-btn:disabled{opacity:.4; cursor:not-allowed; box-shadow:none;}
+
+/* 行囊弹窗 */
+dialog{
+  border:none; border-radius:18px; padding:0; max-width:520px; width:90%;
+  box-shadow:0 12px 40px rgba(0,0,0,.25);
+}
+dialog::backdrop{background:rgba(30,40,60,.55);}
+.dialog-pad{padding:20px;}
+.dialog-pad h2{font-size:1.1rem; margin-bottom:12px; color:var(--gold2);}
+.item-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px;}
+.item{background:#fdf9ee; border:2px solid #e8dcc0; border-radius:12px; padding:10px; text-align:center;}
+.item .i-ico{font-size:2rem; display:block; margin-bottom:4px;}
+.item .i-nm{font-size:.78rem; font-weight:700;}
+.item.locked{opacity:.35; filter:grayscale(.8);}
+.item.locked .i-ico{content:"❓";}
+.close-btn{width:100%; padding:12px; font-size:.95rem; font-weight:700; background:#f0ead8; border:none; border-radius:12px; cursor:pointer; color:#6b6350;}
+
+/* 出使记录 */
+.record{
+  background:#fff; border-radius:18px; border:3px solid var(--gold); padding:20px; margin-top:14px;
+  animation:popIn .4s ease; box-shadow:0 6px 20px rgba(0,0,0,.1);
+}
+.record h3{text-align:center; font-size:1.2rem; color:var(--gold2); margin-bottom:12px;}
+.record .r-row{font-size:.98rem; line-height:1.8; margin-bottom:8px;}
+.record .r-row b{color:var(--ink);}
+.record .seal{text-align:center; margin-top:14px; font-size:.95rem; color:#6b6350;}
+.record .seal b{font-size:1.1rem; color:var(--gold2);}
+.sig-input{
+  width:100%; padding:12px; border:2px solid #e0d5b5; border-radius:12px; font-size:1rem;
+  margin-top:8px; font-family:inherit;
+}
+.sig-input:focus{outline:none; border-color:var(--gold);}
+
+/* 动画 */
+@keyframes popIn{from{transform:scale(.94); opacity:0;} to{transform:scale(1); opacity:1;}}
+@keyframes floaty{0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);}}
+
+/* 进度点 */
+.progress{display:flex; gap:6px; justify-content:center; margin-bottom:12px;}
+.dot{width:10px; height:10px; border-radius:50%; background:#e0d5b5; transition:all .3s;}
+.dot.on{background:var(--gold); transform:scale(1.2);}
+.dot.done{background:#2a9d8f;}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- 顶栏 -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🐫</span>
+      <h1>张骞出塞<span class="sub">历史人物角色扮演 · 第一幕</span></h1>
+    </div>
+    <button class="bag-btn" id="bagBtn">🎒 行囊 <span id="bagCount">0</span>/6</button>
+  </header>
+
+  <!-- 进度点 -->
+  <div class="progress" id="progress"></div>
+
+  <!-- 主舞台 -->
+  <main id="stage"></main>
+
+  <!-- 行囊弹窗 -->
+  <dialog id="bagDialog">
+    <div class="dialog-pad">
+      <h2>🎒 我的行囊</h2>
+      <div class="item-grid" id="bagGrid"></div>
+      <button class="close-btn" id="closeBag">收好行囊 👍</button>
+    </div>
+  </dialog>
+</div>
+
+<script>
+/* ================= 音效 ================= */
+const sfx = {
+  audioCtx:null,
+  beep(freq,dur,type,vol){
+    try{
+      this.audioCtx = this.audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+      const o=this.audioCtx.createOscillator(), g=this.audioCtx.createGain();
+      o.type=type||"sine"; o.frequency.value=freq;
+      g.gain.setValueAtTime(vol||.08, this.audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001, this.audioCtx.currentTime+dur);
+      o.connect(g); g.connect(this.audioCtx.destination);
+      o.start(); o.stop(this.audioCtx.currentTime+dur);
+    }catch(e){}
+  },
+  move(){ this.beep(520,.08,"triangle"); },
+  good(){ this.beep(660,.12,"sine"); setTimeout(()=>this.beep(880,.15,"sine"),90); },
+  star(){ this.beep(1040,.1,"triangle",.1); },
+  bad(){ this.beep(220,.2,"sawtooth",.06); },
+  secret(){ [660,780,990,1320].forEach((f,i)=>setTimeout(()=>this.beep(f,.14,"triangle",.09),i*110)); }
+};
+
+/* ================= 行囊物品 ================= */
+const ITEMS = {
+  jie:      {ico:"🎋", nm:"符节",      desc:"出使的凭证，代表大汉皇帝"},
+  liang:    {ico:"🌾", nm:"干粮",      desc:"路上吃的，越多越好"},
+  shui:     {ico:"💧", nm:"水囊",      desc:"沙漠里水比黄金贵"},
+  sichou:   {ico:"🧵", nm:"丝绸",      desc:"给远方国王的礼物"},
+  lu:       {ico:"🗺️", nm:"路线图",    desc:"贴着祁连山走的绿洲路线"},
+  zhong:    {ico:"🌱", nm:"种子",      desc:"从西域带回的葡萄种子（第二幕）"}
+};
+let owned = new Set();
+
+/* ================= 故事数据 =================
+   节点结构：{ id, narrator(说书人), who, scene(emoji), place,
+               map(可选路线图), choices:[{ico,text,next,good?,kTitle?,kBody?,item?}],
+               after(选项点击后的通用旁白), end? } */
+const STORY = [
+  {
+    id:"s0",
+    who:"📜 说书人",
+    narrator:"小朋友，欢迎来到公元前138年的长安。你叫张骞，是汉朝皇宫里的一名郎官——就是皇帝身边跑腿办事的小官。",
+    scene:"🏯", place:"长安 · 未央宫",
+    choices:[{ico:"👣", text:"走进大殿", next:"s1"}]
+  },
+  {
+    id:"s1",
+    who:"👑 汉武帝",
+    narrator:"“张骞，朕最近很烦恼。匈奴人年年骑马南下，抢我们的牛羊、粮食，边境百姓苦不堪言。朕听说：西域有个大月氏国，被匈奴打败，国王的头骨都被做成了酒杯！他们一定恨透了匈奴。”",
+    scene:"👑", place:"大殿之上",
+    choices:[{ico:"🤔", text:"大月氏……他们真的会帮我们吗？", next:"s2"}]
+  },
+  {
+    id:"s2",
+    who:"👑 汉武帝",
+    narrator:"“朕也不知道。但要想打败匈奴，就得联合所有恨匈奴的人。所以——朕要派一个人出使西域，找到大月氏，说服他们跟大汉联手。”",
+    scene:"📜", place:"一封诏书展开",
+    choices:[
+      {ico:"🙋", text:"“陛下，臣愿意去！”", next:"s3", good:true,
+       kTitle:"💡 勇敢的张骞",
+       kBody:"公元前138年，汉武帝公开招募出使西域的人。没人知道西域在哪、有多远、路上有什么。张骞第一个站出来——这一去，就是13年。",
+       item:"jie"},
+      {ico:"😨", text:"“陛下……西域有多远？会不会有危险？”", next:"s3",
+       kTitle:"💡 没人去过西域",
+       kBody:"当时的中原人，几乎没人到过西域。正因为不知道，汉武帝才要派人去探路。张骞的勇敢，就是敢走进这片‘完全未知’。"},
+      {ico:"🧐", text:"“陛下，臣想先弄清楚大月氏在哪，再出发。”", next:"s3",
+       kTitle:"💡 连地图都没有",
+       kBody:"公元前2世纪，中原没有西域的地图。去西域的路怎么走、要多久，全都靠出使的人自己摸索。张骞这一趟，等于亲手画出了第一张‘西域路线图’。"}
+    ]
+  },
+  {
+    id:"s3",
+    who:"👑 汉武帝",
+    narrator:"“好！朕赐你符节，封你为使者。从今天起，你代表大汉去见大月氏！” 你双手接过符节——这是一根系着牦牛尾的竹杖，路上遇到任何人，它就是你的‘护照’。",
+    scene:"🎋", place:"符节在手",
+    choices:[{ico:"🐫", text:"带着符节，准备出发！", next:"s4"}]
+  },
+  {
+    id:"s4",
+    who:"🧳 随从",
+    narrator:"出发前一天，随从问你：“张大人，从长安到西域要穿过大沙漠，干粮和水得省着带。您看，骆驼背上先装什么？”",
+    scene:"🐪", place:"出发前夜 · 商队营地",
+    choices:[
+      {ico:"💧", text:"“多带水囊和干粮！命保住了才有以后。”", next:"s5", good:true,
+       kTitle:"💡 沙漠里，水比黄金贵",
+       kBody:"离开绿洲之后，水源要靠绿洲城市补给。张骞的队伍后来在沙漠里断过水，靠的就是提前准备的这份谨慎。",
+       item:"shui"},
+      {ico:"🧵", text:"“多带丝绸！送给沿途的国王，人家才肯帮我们。”", next:"s5",
+       kTitle:"💡 丝绸是最好的名片",
+       kBody:"丝绸在当时的西域和罗马是稀世珍宝，一匹能换很多马和粮食。张骞带去的丝绸，就是打通关系的‘敲门砖’。",
+       item:"sichou"},
+      {ico:"🌾", text:"“什么都多带点！有备无患。”", next:"s5",
+       kTitle:"💡 长途出使的学问",
+       kBody:"出使西域不是走亲戚——路远、天热、可能迷路。带的每一斤东西都要掂量：多了走不动，少了活不了。",
+       item:"liang"}
+    ]
+  },
+  {
+    id:"s5",
+    who:"🗺️ 向导老马",
+    narrator:"队伍出了长安，一路向西。前面是连绵的祁连山，北边是一望无际的大沙漠。向导老马摊开一张地图：“大人，从这里到西域，有三条路。您来定。”",
+    scene:"🏔️", place:"河西走廊入口",
+    map:{
+      title:"从长安出发，三条路，你选哪条？",
+      stops:[
+        {ico:"🏯", nm:"长安", note:"出发地"},
+        {ico:"🏔️", nm:"祁连山", note:"雪顶", cls:"mount"},
+        {ico:"🌴", nm:"绿洲城", note:"武威·张掖·酒泉·敦煌", cls:"well"},
+        {ico:"🏜️", nm:"大沙漠", note:"没有水"},
+        {ico:"🌍", nm:"西域", note:"大月氏"}
+      ],
+      highlight:1
+    },
+    choices:[
+      {ico:"🐫", text:"贴着祁连山走——山脚下有绿洲城市，可以补水歇脚", next:"s6", good:true,
+       kTitle:"💡 河西走廊：雪水浇出的路",
+       kBody:"祁连山顶的雪化了，流到山脚，浇出武威、张掖、酒泉、敦煌一串绿洲。有绿洲才有水，有水才能住人——所以商队和使者都只能贴着山走。这条路，就是河西走廊！",
+       item:"lu"},
+      {ico:"🏜️", text:"直穿大沙漠——看起来最近", next:"s5",
+       kTitle:"💡 最近的路线，往往最危险",
+       kBody:"沙漠里没有水、没有绿洲、没有人家。直穿看起来近，可走进去，人和骆驼几天就会渴死。张骞的队伍不敢赌。",
+       good:false},
+      {ico:"🧊", text:"翻过祁连山——走山北面", next:"s5",
+       kTitle:"💡 为什么不能翻山",
+       kBody:"祁连山太高了，山顶常年积雪，马和骆驼翻不过去。而且山北面是匈奴的地盘——撞上匈奴骑兵，就危险了。",
+       good:false}
+    ]
+  },
+  {
+    id:"s6",
+    who:"🐫 骆驼爷爷",
+    narrator:"你选了贴着祁连山走。一路上，武威、张掖、酒泉、敦煌，一座座绿洲城市像珍珠一样排在脚下——每一个都有水、有城、有人。商队在这补水、歇脚，再接着走。",
+    scene:"🌴", place:"河西走廊 · 绿洲城市链",
+    choices:[{ico:"🚶", text:"继续向西，走向大漠", next:"s7"}]
+  },
+  {
+    id:"s7",
+    who:"📜 说书人",
+    narrator:"离开敦煌，再往西就是大沙漠了。你握着符节，心里盘算着：还有多远才能到大月氏？就在这时——前方烟尘滚滚，一队匈奴骑兵拦住去路！",
+    scene:"🐎", place:"敦煌以西 · 戈壁滩",
+    choices:[
+      {ico:"🎋", text:"举起符节：“我是大汉使者，请让我们通行！”", next:"s8",
+       kTitle:"💡 符节：使者的护照",
+       kBody:"符节代表汉朝皇帝。张骞一路上都举着它——即使被匈奴抓住，他也始终没有丢掉符节。"},
+      {ico:"🏃", text:"掉头就跑！", next:"s8",
+       kTitle:"💡 跑不掉的",
+       kBody:"在戈壁上，两条腿跑不过匈奴的马。张骞的运气，不在跑得快。"},
+      {ico:"🤫", text:"假装商队，混过去", next:"s8",
+       kTitle:"💡 商队也躲不过",
+       kBody:"匈奴人常年在这条路上拦商队，一看就知道你是不是商人。"}
+    ]
+  },
+  {
+    id:"s8",
+    who:"🐎 匈奴骑兵",
+    narrator:"“汉人？抓起来！” 你被匈奴兵押走了。符节还在你手里，可队伍已经被冲散。你被带进匈奴的营地——这一关，就是十年。",
+    scene:"⛺", place:"匈奴营地 · 十年",
+    choices:[{ico:"😮", text:"十年！接下来会发生什么？", next:"s9"}]
+  },
+  {
+    id:"s9",
+    who:"📜 说书人",
+    narrator:"十年里，匈奴人给你安排了妻子、孩子，想让你安心留下来。但你始终藏着那支符节——你还没完成出使的任务。",
+    scene:"🌙", place:"匈奴营地 · 深夜",
+    choices:[
+      {ico:"🤔", text:"“留下来，有家有小，多安稳啊……”", next:"s10"},
+      {ico:"🎋", text:"“不行，我答应过皇帝，一定要找到大月氏！”", next:"s10", good:true}
+    ]
+  },
+  {
+    id:"s10",
+    who:"📜 说书人",
+    narrator:"有一天，匈奴内部起了纷争，看守松了。你抓住机会，带上妻子和随从，趁夜逃出营地，继续向西——向着大月氏的方向！",
+    scene:"🌙", place:"逃离匈奴营地",
+    choices:[{ico:"🌱", text:"第一幕·完 —— 查看出使记录", next:"end"}]
+  }
+];
+
+/* ================= 引擎 ================= */
+let cur = 0;           // 当前节点下标
+let name = "";         // 孩子名字
+let wrongPicks = 0;    // 选错次数
+const picked = new Set(); // 已收集物品去重
+
+const $ = (id)=>document.getElementById(id);
+const stage = $("stage");
+
+function renderNode(i){
+  cur = i;
+  const n = STORY[i];
+  // 进度点
+  const prog = $("progress");
+  prog.innerHTML = STORY.map((_,idx)=>`<span class="dot ${idx<i?"done":idx===i?"on":""}"></span>`).join("");
+  // 舞台
+  let html = "";
+  html += `<div class="narrator"><div class="avatar">${n.scene||"📜"}</div><div class="bubble"><span class="who">${n.who||"📜 说书人"}</span>${n.narrator}</div></div>`;
+  if(n.map){
+    html += `<div class="mapbox"><div class="m-title">${n.map.title}</div><div class="maprow">`;
+    n.map.stops.forEach((s,idx)=>{
+      html += `<div class="mstop ${s.cls||""}"><span class="pin">${s.ico}</span><span class="nm">${s.nm}</span><span class="note">${s.note||""}</span></div>`;
+      if(idx < n.map.stops.length-1) html += `<div class="mpath ${idx>=n.map.highlight?"off":""}"></div>`;
+    });
+    html += `</div></div>`;
+  }
+  html += `<div class="choices" id="choices"></div>`;
+  stage.innerHTML = html;
+
+  const cbox = $("choices");
+  n.choices.forEach((c,idx)=>{
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.innerHTML = `<span class="c-ico">${c.ico}</span><span>${c.text}</span>`;
+    btn.addEventListener("click", ()=>choose(n, c, btn));
+    cbox.appendChild(btn);
+  });
+}
+
+function choose(n, c, btn){
+  sfx.move();
+  // 禁用所有选项
+  document.querySelectorAll(".choice").forEach(b=>b.classList.add("disabled"));
+  // 物品
+  if(c.item && !owned.has(c.item)){
+    owned.add(c.item);
+    updateBag();
+    sfx.star();
+  }
+  // 知识卡/后果
+  if(c.kTitle){
+    const fb = document.createElement("div");
+    fb.className = "feedback knowledge" + (c.good===false?" bad":"");
+    fb.innerHTML = `<h4>${c.good===false?"🧠 线索":"✨ 你获得了知识"}</h4><div class="k-title">${c.kTitle}</div><div>${c.kBody}</div>`;
+    stage.appendChild(fb);
+  }
+  if(c.good===false) wrongPicks++;
+  // 下一个
+  const nb = document.createElement("button");
+  nb.className = "next-btn";
+  nb.textContent = (c.next==="end") ? "查看我的出使记录 📜" : "继续 ▶";
+  nb.addEventListener("click", ()=>{
+    sfx.move();
+    if(c.next==="end"){ renderEnd(); }
+    else { renderNode(STORY.findIndex(x=>x.id===c.next)); }
+  });
+  stage.appendChild(nb);
+}
+
+/* ================= 行囊 ================= */
+function updateBag(){
+  $("bagCount").textContent = owned.size;
+}
+function renderBag(){
+  const grid = $("bagGrid");
+  grid.innerHTML = Object.entries(ITEMS).map(([k,v])=>{
+    const got = owned.has(k);
+    return `<div class="item ${got?"":"locked"}"><span class="i-ico">${got?v.ico:"❓"}</span><span class="i-nm">${got?v.nm:"???"}</span><span style="font-size:.62rem;color:#a89c80;display:block;">${got?("已收入行囊"):"还没得到"}</span></div>`;
+  }).join("");
+  $("bagDialog").showModal();
+}
+$("bagBtn").addEventListener("click",()=>{ sfx.move(); renderBag(); });
+$("closeBag").addEventListener("click",()=>$("bagDialog").close());
+
+/* ================= 结局：出使记录 ================= */
+function renderEnd(){
+  stage.innerHTML = "";
+  const prog = $("progress");
+  prog.innerHTML = STORY.map(()=>`<span class="dot done"></span>`).join("");
+
+  const got = [...owned].map(k=>ITEMS[k]);
+  const rank = owned.size>=5 ? "🏆 传奇使者" : owned.size>=3 ? "⭐ 勇敢的使者" : "🌱 新晋使者";
+  const rankLine = owned.size>=5 ? "你把每一件该准备的东西都带上了——冷静、勇敢、有远见！" :
+                   owned.size>=3 ? "你做出了关键的选择，开始像一个真正的使者了！" :
+                   "这是你的第一次出使，胆量可嘉，下次准备得更充分就更好了！";
+
+  const nameHtml = !name ? `<input class="sig-input" id="nameInput" placeholder="写下你的名字，小使者 ✍️" maxlength="12"><button class="next-btn" id="nameBtn" style="margin-top:8px;">署名 📜</button>` :
+    `<b>${name}</b>`;
+
+  stage.innerHTML = `
+    <div class="record">
+      <h3>📜 我的出使记录</h3>
+      <div class="r-row">🧭 <b>我扮演的角色：</b>张骞，大汉使者</div>
+      <div class="r-row">🎯 <b>我的使命：</b>出使西域，联络大月氏，共同对付匈奴</div>
+      <div class="r-row">🐫 <b>我选的路：</b>贴着祁连山走河西走廊，因为山脚下有雪水浇出的绿洲城市</div>
+      <div class="r-row">🎒 <b>我带回的行囊（${owned.size}/6）：</b>${got.map(v=>v.ico+v.nm).join("、")||"空空的"}</div>
+      <div class="r-row">🤔 <b>我还没弄明白：</b>张骞被扣了十年，他还能找到大月氏吗？</div>
+      <div class="r-row">🗣️ <b>说给爸妈听：</b>张骞是第一个走进西域的汉朝人。他出使前，谁都不知道西域有多远；他被匈奴扣了十年也不放弃——因为他答应过皇帝，一定要完成任务。</div>
+      <div style="margin-top:12px; padding:12px; border-radius:14px; background:#fff3d8; border:2px solid var(--gold);"><b>${rank}</b><br>${rankLine}</div>
+      <div class="seal">—— 小使者 ${nameHtml} 的出使记录 ✍️</div>
+      <button class="next-btn" id="restartBtn" style="margin-top:16px; background:linear-gradient(180deg,#5aa9a0,#2a9d8f); box-shadow:0 4px 0 #1c6b62;">🔄 重新出使（再玩一次）</button>
+      <button class="next-btn" id="teaseBtn" style="margin-top:10px; background:linear-gradient(180deg,#8e6bb8,#6d4d96); box-shadow:0 4px 0 #4a3568;">🔜 第二幕预告：被扣的十年 →（敬请期待）</button>
+    </div>`;
+  sfx.good();
+
+  $("nameBtn")?.addEventListener("click",()=>{
+    name = $("nameInput").value.trim() || "小使者";
+    renderEnd();
+  });
+  $("restartBtn").addEventListener("click",()=>{ location.reload(); });
+  $("teaseBtn").addEventListener("click",()=>{ sfx.secret(); alert("第二幕《被扣的十年》：张骞在匈奴营地藏起符节、等待机会、最后逃出继续西行——正在制作中！"); });
+}
+
+/* ================= 启动 ================= */
+renderNode(0);
+updateBag();
+</script>
+</body>
+</html>
