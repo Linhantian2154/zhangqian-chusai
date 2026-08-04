@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<link rel="manifest" href="manifest.json">
+<link rel="manifest" href="../manifest.json">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>历史人物角色扮演 · 张骞出塞 · 完整版（三幕）</title>
@@ -615,6 +615,10 @@ function renderEnd(){
     const done = JSON.parse(localStorage.getItem("shiguang_story_progress") || "{}");
     done["zhangqian"] = { done:true, at:Date.now(), rank:rank };
     localStorage.setItem("shiguang_story_progress", JSON.stringify(done));
+    /* ===== 全局物品收集（图鉴）===== */
+    const all = JSON.parse(localStorage.getItem("shiguang_items") || "{}");
+    [...owned].forEach(k=>{ all["zhangqian_"+k] = ITEMS[k].nm; });
+    localStorage.setItem("shiguang_items", JSON.stringify(all));
   }catch(e){}
   $("teaseBtn").addEventListener("click",()=>{ sfx.secret(); alert("🎉 张骞的故事讲完了！快去剧场玩《郑和下西洋》：他靠着季风，开着比足球场还大的宝船驶向大海！"); });
 }
@@ -625,7 +629,7 @@ updateBag();
 </script>
 <script>
 if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); });
+  window.addEventListener("load",()=>{ navigator.serviceWorker.register("../sw.js").catch(()=>{}); });
 }
 (function(){
   if((typeof window.matchMedia==="function" && window.matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true) return;
