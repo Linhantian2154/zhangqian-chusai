@@ -71,6 +71,11 @@ body{
 .mstop.mount .pin{font-size:2rem;}
 .mstop.mount .nm{background:#d8eef9;}
 .mstop.well .pin{font-size:1.4rem;}
+/* 示意图 */
+.illus-box{background:#fff; border:2px solid #e8dcc0; border-radius:14px; padding:12px; margin-top:10px; box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.illus-title{text-align:center; font-size:.85rem; font-weight:800; color:#5b7a8c; margin-bottom:8px;}
+.illus-svg svg{width:100%; height:auto; display:block;}
+.illus-cap{text-align:center; font-size:.72rem; color:#a89c80; margin-top:6px;}
 
 /* 选项 */
 .choices{display:flex; flex-direction:column; gap:10px; margin-top:4px;}
@@ -279,6 +284,11 @@ const STORY = [
     who:"🗺️ 向导老马",
     narrator:"队伍出了长安，一路向西。前面是连绵的祁连山，北边是一望无际的大沙漠。向导老马摊开一张地图：“大人，从这里到西域，有三条路。您来定。”",
     scene:"🏔️", place:"河西走廊入口",
+    illus:{
+      title:"🏔️ 河西走廊：为什么城市长在雪山脚下？",
+      caption:"因为山顶的雪化了，流到山脚，浇出一串绿洲——有绿洲才有水，有水才能住人。武威、张掖、酒泉、敦煌，都是雪水浇出来的城市！",
+      svg:'<svg viewBox="0 0 520 220" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe3f2"/><stop offset="1" stop-color="#eaf4f8"/></linearGradient><linearGradient id="sn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#d8eef9"/></linearGradient><linearGradient id="sd" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9c46a"/><stop offset="1" stop-color="#c99b3f"/></linearGradient></defs><rect width="520" height="220" fill="url(#sk)" rx="12"/><text x="260" y="24" text-anchor="middle" font-size="12" fill="#3d3a2e" font-weight="bold">河西走廊横切面</text><polygon points="30,40 110,40 70,140 30,140" fill="#8a8577" opacity=".35"/><polygon points="60,38 140,38 95,150 60,150" fill="#8a8577" opacity=".55"/><polygon points="95,36 175,36 130,160 95,160" fill="url(#sn)"/><text x="132" y="52" text-anchor="middle" font-size="11" fill="#3a6a8a" font-weight="bold">祁连山</text><text x="132" y="68" text-anchor="middle" font-size="9" fill="#5a8aa8">雪顶</text><path d="M130 80 Q135 120 130 150" stroke="#7ec8e3" stroke-width="5" fill="none" stroke-linecap="round"/><text x="145" y="105" font-size="9" fill="#3a86a8">雪化了</text><text x="145" y="118" font-size="9" fill="#3a86a8">流下山</text><circle cx="130" cy="160" r="5" fill="#7ec8e3"/><path d="M130 160 L260 160" stroke="#7ec8e3" stroke-width="3" stroke-dasharray="5,4"/><text x="195" y="152" font-size="9" fill="#3a86a8">雪水浇出绿洲</text><g font-size="10" font-weight="bold" fill="#4a7a3a" text-anchor="middle"><circle cx="200" cy="172" r="16" fill="#a8d5a2" stroke="#4a7a3a" stroke-width="2"/><text x="200" y="176">武威</text><circle cx="270" cy="172" r="16" fill="#a8d5a2" stroke="#4a7a3a" stroke-width="2"/><text x="270" y="176">张掖</text><circle cx="340" cy="172" r="16" fill="#a8d5a2" stroke="#4a7a3a" stroke-width="2"/><text x="340" y="176">酒泉</text><circle cx="410" cy="172" r="16" fill="#a8d5a2" stroke="#4a7a3a" stroke-width="2"/><text x="410" y="176">敦煌</text></g><rect x="150" y="198" width="320" height="14" fill="url(#sd)" rx="7"/><text x="310" y="209" text-anchor="middle" font-size="9" fill="#7a5a1a" font-weight="bold">绿洲串成一条路 → 通向西域</text><rect x="20" y="198" width="100" height="14" fill="#e0b36a" rx="7"/><text x="70" y="209" text-anchor="middle" font-size="9" fill="#7a5a1a" font-weight="bold">沙漠（没水）</text></svg>'
+    },
     map:{
       title:"从长安出发，三条路，你选哪条？",
       stops:[
@@ -514,6 +524,9 @@ function renderNode(i){
       if(idx < n.map.stops.length-1) html += `<div class="mpath ${idx>=n.map.highlight?"off":""}"></div>`;
     });
     html += `</div></div>`;
+  }
+  if(n.illus){
+    html += `<div class="illus-box"><div class="illus-title">${n.illus.title||"示意图"}</div><div class="illus-svg">${n.illus.svg}</div>${n.illus.caption?`<div class="illus-cap">${n.illus.caption}</div>`:""}</div>`;
   }
   html += `<div class="choices" id="choices"></div>`;
   stage.innerHTML = html;
